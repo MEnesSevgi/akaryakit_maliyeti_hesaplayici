@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>akaryakıt_maliyeti</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akaryakıt Maliyet Hesaplayıcı</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        .btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .results {
+            background-color: #e7f1ff;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap; /* Metnin düzgün görünmesi için */
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Akaryakıt Maliyet Hesaplayıcı</h1>
+       <h1>Hazırlayan:Muhammed Enes SEVGİ</h1>
+        
+        <div class="form-group">
+            <label for="fuel-price">Akaryakıt Fiyatı (TL):</label>
+            <input type="number" id="fuel-price" placeholder="Fiyatı giriniz" required>
+        </div>
+
+        <div class="form-group">
+            <label for="vehicle-model">Araç Modelleri:</label>
+            <select id="vehicle-model">
+                <option value="Ford Transit">Ford Transit</option>
+                <option value="Mercedes Sprinter">Mercedes Sprinter</option>
+                <option value="Volkswagen Crafter">Volkswagen Crafter</option>
+                <option value="Renault Master">Renault Master</option>
+                <option value="Peugeot Boxer">Peugeot Boxer</option>
+                <option value="Iveco Daily">Iveco Daily</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="consumption">Yakıt Tüketimi (L/100 km):</label>
+            <input type="number" id="consumption" placeholder="Tüketimi giriniz" required>
+        </div>
+
+        <div class="form-group">
+            <label for="distance">Güzergah Uzunluğu (Gidiş km):</label>
+            <input type="number" id="distance" placeholder="Mesafeyi giriniz" required>
+        </div>
+
+        <div class="form-group">
+            <label for="days">Gün Sayısı:</label>
+            <input type="number" id="days" value="30" min="1" max="30" required>
+        </div>
+
+        <button id="calculate" class="btn">Hesapla</button>
+        <button id="save-results" class="btn">Sonuçları Kaydet</button>
+        <button id="current-fuel-price" class="btn">Güncel Akaryakıt Fiyatı</button>
+
+        <h2>Sonuçlar:</h2>
+        <pre id="results" class="results"></pre>
+
+        <canvas id="costChart" width="600" height="400" style="display:none;"></canvas>
+        <button id="save-cost-chart" class="btn" style="display:none;">Maliyeti JPG Olarak Kaydet</button>
+        <canvas id="litersChart" width="600" height="400" style="display:none;"></canvas>
+        <button id="save-liters-chart" class="btn" style="display:none;">Harcanan Litre JPG Olarak Kaydet</button>
+    </div>
+
+    <div class="container">
+        <h2>Giderler</h2>
+        <div class="form-group">
+            <label for="fuel-cost">Yakıt Gideri:</label>
+            <input type="number" id="fuel-cost" placeholder="Yakıt Gideri" required>
+        </div>
+
+        <div class="form-group">
+            <label for="driver-cost">Şoför Gideri:</label>
+            <input type="number" id="driver-cost" placeholder="Şoför Gideri" required>
+        </div>
+
+        <div class="form-group">
+            <label for="insurance-cost">Sigorta Gideri:</label>
+            <input type="number" id="insurance-cost" placeholder="Sigorta Gideri" required>
+        </div>
+
+        <div class="form-group">
+            <label for="casco-cost">Kasko Gideri:</label>
+            <input type="number" id="casco-cost" placeholder="Kasko Gideri" required>
+        </div>
+
+        <div class="form-group">
+            <label for="accident-cost">Kaza Gideri:</label>
+            <input type="number" id="accident-cost" placeholder="Kaza Gideri" required>
+        </div>
+
+        <div class="form-group">
+            <label for="other-cost">Diğer Giderler:</label>
+            <input type="number" id="other-cost" placeholder="Diğer Giderler" required>
+        </div>
+
+        <button id="calculate-total" class="btn">Topla</button>
+        <button id="save-expenses" class="btn">Kaydet</button>
+
+        <h3>Toplam Giderler: <span id="total-expenses">0 TL</span></h3>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let monthlyCost = 0; // Aylık maliyet değişkeni
+        let totalLiters = 0; // Toplam litre değişkeni
+
+        document.getElementById("calculate").addEventListener("click", function() {
+            const fuelPrice = parseFloat(document.getElementById("fuel-price").value);
+            const vehicleModel = document.getElementById("vehicle-model").value;
+            const consumption = parseFloat(document.getElementById("consumption").value);
+            const distance = parseFloat(document.getElementById("distance").value);
+            const days = parseInt(document.getElementById("days").value);
+
+            if (isNaN(fuelPrice) || isNaN(consumption) || isNaN(distance) || isNaN(days)) {
+                alert("Lütfen tüm alanları doldurun.");
+                return;
+            }
+
+            const totalDistance = 2 * distance; 
+            const monthlyDistance = totalDistance * days; 
+            totalLiters = (consumption / 100) * totalDistance; 
+            const totalCost = totalLiters * fuelPrice; 
+            monthlyCost = totalCost * days; 
+
+            const resultMessage = `Araç Modeli: ${vehicleModel}\n` +
+                                  `Gidiş-Geliş Uzunluğu: ${totalDistance.toFixed(2)} km\n` +
+                                  `Aylık Toplam KM: ${monthlyDistance.toFixed(2)} km\n` +
+                                  `Toplam Maliyet (1 sefer): ${totalCost.toFixed(2)} TL\n` +
+                                  `Aylık Maliyet: ${monthlyCost.toFixed(2)} TL\n`;
+
+            document.getElementById("results").textContent = resultMessage;
+
+            // Grafik oluşturma
+            plotCostGraph(monthlyCost);
+            plotLitersGraph(totalLiters);
+
+            // Sonuçlara grafik değerlerini ekle
+            appendGraphValues();
+        });
+
+        function appendGraphValues() {
+            const results = document.getElementById("results");
+            let litersMessage = '';
+            let costMessage = '';
+
+            for (let i = 1; i <= 12; i++) {
+                litersMessage += `Aylık Harcanan Litre: ${i} Ay: ${(totalLiters * i).toFixed(2)} L\n`;
+                costMessage += `Aylık Maliyet: ${i} Ay: ${(monthlyCost * i).toFixed(2)} TL\n`;
+            }
+
+            results.textContent += litersMessage + costMessage;
+        }
+
+        document.getElementById("save-results").addEventListener("click", function() {
+            const resultsText = document.getElementById("results").textContent;
+            const blob = new Blob([resultsText], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'sonuclar.txt';
+            link.click();
+        });
+
+        document.getElementById("current-fuel-price").addEventListener("click", function() {
+            window.open("https://www.doviz.com/akaryakit-fiyatlari/kocaeli/gebze", "_blank");
+        });
+
+        function plotCostGraph(monthlyCost) {
+            const ctx = document.getElementById('costChart').getContext('2d');
+            const labels = ['1 Ay', '2 Ay', '3 Ay', '4 Ay', '5 Ay', '6 Ay', '7 Ay', '8 Ay', '9 Ay', '10 Ay', '11 Ay', '12 Ay'];
+            const data = Array.from({ length: 12 }, (_, i) => monthlyCost * (i + 1));
+
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Aylık Maliyet (TL)',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        borderDash: [5, 5] // Kesikli çizgiler için
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)', // Arka plan ızgarası
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)', // Arka plan ızgarası
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Değerleri sütunların üstüne yaz
+            data.forEach((value, index) => {
+                ctx.fillStyle = 'black';
+                ctx.fillText(value.toFixed(2), index + 0.5, value + 5); // Sütunların üstüne yaz
+            });
+
+            document.getElementById('costChart').style.display = 'block'; // Grafiği göster
+            document.getElementById('save-cost-chart').style.display = 'block'; // Kaydet butonunu göster
+        }
+
+        function plotLitersGraph(totalLiters) {
+            const ctx = document.getElementById('litersChart').getContext('2d');
+            const labels = ['1 Ay', '2 Ay', '3 Ay', '4 Ay', '5 Ay', '6 Ay', '7 Ay', '8 Ay', '9 Ay', '10 Ay', '11 Ay', '12 Ay'];
+            const data = Array.from({ length: 12 }, (_, i) => totalLiters * (i + 1));
+
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Aylık Harcanan Litre (L)',
+                        data: data,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                        borderDash: [5, 5] // Kesikli çizgiler için
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)', // Arka plan ızgarası
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)', // Arka plan ızgarası
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Değerleri sütunların üstüne yaz
+            data.forEach((value, index) => {
+                ctx.fillStyle = 'black';
+                ctx.fillText(value.toFixed(2), index + 0.5, value + 5); // Sütunların üstüne yaz
+            });
+
+            document.getElementById('litersChart').style.display = 'block'; // Grafiği göster
+            document.getElementById('save-liters-chart').style.display = 'block'; // Kaydet butonunu göster
+        }
+
+        // Grafiklerin JPG olarak kaydedilmesi
+        document.getElementById("save-cost-chart").addEventListener("click", function() {
+            const canvas = document.getElementById('costChart');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/jpeg', 1.0); // 1.0 kalite ile kaydet
+            link.download = 'maliyet_grafigi.jpg';
+            link.click();
+        });
+
+        document.getElementById("save-liters-chart").addEventListener("click", function() {
+            const canvas = document.getElementById('litersChart');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/jpeg', 1.0); // 1.0 kalite ile kaydet
+            link.download = 'harcanan_litre_grafigi.jpg';
+            link.click();
+        });
+
+        // Giderler toplamını hesaplama
+        document.getElementById("calculate-total").addEventListener("click", function() {
+            const fuelCost = parseFloat(document.getElementById("fuel-cost").value) || 0;
+            const driverCost = parseFloat(document.getElementById("driver-cost").value) || 0;
+            const insuranceCost = parseFloat(document.getElementById("insurance-cost").value) || 0;
+            const cascoCost = parseFloat(document.getElementById("casco-cost").value) || 0;
+            const accidentCost = parseFloat(document.getElementById("accident-cost").value) || 0;
+            const otherCost = parseFloat(document.getElementById("other-cost").value) || 0;
+
+            const totalExpenses = fuelCost + driverCost + insuranceCost + cascoCost + accidentCost + otherCost;
+            document.getElementById("total-expenses").innerText = totalExpenses + " TL";
+        });
+
+        // Giderleri kaydetme
+        document.getElementById("save-expenses").addEventListener("click", function() {
+            const fuelCost = document.getElementById("fuel-cost").value;
+            const driverCost = document.getElementById("driver-cost").value;
+            const insuranceCost = document.getElementById("insurance-cost").value;
+            const cascoCost = document.getElementById("casco-cost").value;
+            const accidentCost = document.getElementById("accident-cost").value;
+            const otherCost = document.getElementById("other-cost").value;
+
+            const expensesText = `Yakıt Gideri: ${fuelCost} TL\n` +
+                                 `Şoför Gideri: ${driverCost} TL\n` +
+                                 `Sigorta Gideri: ${insuranceCost} TL\n` +
+                                 `Kasko Gideri: ${cascoCost} TL\n` +
+                                 `Kaza Gideri: ${accidentCost} TL\n` +
+                                 `Diğer Giderler: ${otherCost} TL\n`;
+
+            const blob = new Blob([expensesText], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'giderler.txt';
+            link.click();
+        });
+    </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
